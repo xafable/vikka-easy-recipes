@@ -11,6 +11,9 @@ import {
     createRouter
 } from 'vue-router';
 
+import { createStore } from 'vuex'
+import VueCookies from 'vue-cookies'
+
 // Import our custom CSS
 import '../sass/app.scss'
 
@@ -34,6 +37,16 @@ import { faYoutube } from '@fortawesome/free-brands-svg-icons'
 
 library.add(faUtensils,faAddressBook,faFacebook,faYoutube,faBlog)
 
+import Toast from "vue-toastification";
+// Import the CSS or use your own!
+import "vue-toastification/dist/index.css";
+
+
+
+const options = {
+    position: "top-left",
+};
+
 
 
 
@@ -46,24 +59,43 @@ library.add(faUtensils,faAddressBook,faFacebook,faYoutube,faBlog)
 
 const app = createApp({});
 
-import App from './components/App.vue';
-import NavigationComponent from './components/NavigationComponent.vue';
-import RecipesComponent from "./components/RecipesComponent.vue";
-import ModalComponent from "./components/ModalComponent.vue";
-import ExploreRecipes from "./components/ExploreRecipes.vue";
-import DefButton from "./components/UI/DefButton.vue";
+import App from './app/App.vue';
+import NavigationComponent from './app/components/NavigationComponent.vue';
+
+import RecipeItemComponent from "./app/components/recipes/RecipeItemComponent.vue";
+import RecipeDetailedComponent from "./app/components/recipes/RecipeDetailedComponent.vue";
+
+
+import ModalComponent from "./app/components/ModalComponent.vue";
+import LoginComponent from "./app/components/LoginComponent.vue";
+import ExploreRecipes from "./app/components/ExploreRecipes.vue";
+import DefButton from "./app/ui/DefButton.vue";
+import RegisterComponent from "./app/components/RegisterComponent.vue";
+import AuthComponent from "./app/components/AuthComponent.vue";
+
+import HomePage from "./app/pages/Home.vue";
 
 
 app.component('app', App);
 app.component('modal-component', ModalComponent);
 app.component('navigation-component', NavigationComponent);
-app.component('recipes-component', RecipesComponent);
+app.component('recipe-detailed-component', RecipeDetailedComponent);
+app.component('recipe-item-component', RecipeItemComponent);
 app.component('explore-recipes-component', ExploreRecipes);
 app.component('def-button', DefButton);
-app.component('font-awesome-icon', FontAwesomeIcon)
+app.component('font-awesome-icon', FontAwesomeIcon);
+app.component('login-component', LoginComponent);
+app.component('auth-component', AuthComponent);
+app.component('register-component', RegisterComponent);
+
+app.component('home-page', HomePage);
 
 
 app.config.globalProperties.app_url = 'http://vikka-easy-recipes'
+
+
+
+
 
 
 
@@ -86,7 +118,8 @@ app.config.globalProperties.app_url = 'http://vikka-easy-recipes'
  */
 
 const routes = [
-    { path: '/recipes', component: RecipesComponent },
+    { path: '/', component: HomePage },
+    { path: '/recipe/:id', component: RecipeDetailedComponent },
 ]
 
 const router = createRouter({
@@ -95,5 +128,40 @@ const router = createRouter({
     routes, // short for `routes: routes`
 })
 
+// Create a new store instance.
+const store = createStore({
+    state () {
+        return {
+            user:{
+                isLoggedIn: false,
+                token: '11',
+                userData: ''
+            }
+
+        }
+    },
+    mutations: {
+        setLoggedInTrue (state) {
+            state.user.isLoggedIn = true;
+        },
+        setToken(state,token) {
+            state.user.token = token;
+        },
+        setUserData(state,data){
+            state.user.userData = data;
+        }
+    }
+})
+
+
+
+
+
+
 app.use(router);
+app.use(store);
+app.use(VueCookies, { expire: '180d'});
+app.use(Toast, options);
+
+
 app.mount('#app');

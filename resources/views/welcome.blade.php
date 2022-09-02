@@ -8,6 +8,14 @@
     </head>
 
     <body>
+    <script>
+        window.clientData = {!!json_encode([
+            'isLoggedin' => true,
+            'user' => Auth::user()
+        ])!!}
+    </script>
+
+
     <div id="app">
       <app></app>
     </div>

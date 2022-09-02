@@ -14,8 +14,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->get('/get_me', function (Request $request) {
+    return response()->json([
+        'success' => true,
+        'message' => 'Вход выполнен',
+        'user' => $request->user(),
+    ],200);
+
 });
 
 
@@ -25,7 +30,19 @@ Route::controller(\App\Http\Controllers\CategoryController::class)->group(functi
 
 });
 
+Route::controller(\App\Http\Controllers\UserController::class)->group(function () {
+    Route::post('/register/', 'store');
+    Route::post('/login/', 'auth');
+});
+
+Route::controller(\App\Http\Controllers\RecipeController::class)->group(function () {
+    Route::get('/recipes/', 'index');
+    Route::get('/recipe/{id}', 'get');
+
+});
+
 Route::get('/exec',function (){
-    \App\Models\SubCategory::factory()->count(50)->create();
+    \App\Models\Recipe::factory()->count(50)->create();
     return 200;
 });
+
